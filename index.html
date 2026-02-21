@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cedar Knolls Area Map</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header id="app-header">
+    <div id="header-logo">
+      <img src="Design Assets/CK_nobg.svg" alt="Cedar Knolls Logo" id="ck-logo">
+    </div>
+    <div id="header-title">
+      <span id="title-main">Cedar Knolls</span>
+      <span id="title-sub">Area Map</span>
+    </div>
+  </header>
+
+  <!-- Filter Bar -->
+  <nav id="filter-bar" role="navigation" aria-label="Category filters">
+    <button class="filter-btn active" data-category="all">All</button>
+    <!-- Category buttons injected by JS -->
+  </nav>
+
+  <!-- Main content: map + side panel -->
+  <div id="main-content">
+    <div id="map"></div>
+
+    <!-- Side Panel -->
+    <aside id="side-panel" aria-label="Place details" aria-hidden="true">
+      <button id="panel-close" aria-label="Close panel">&times;</button>
+      <div id="panel-content">
+        <div id="panel-category-badge"></div>
+        <h2 id="panel-name"></h2>
+        <p id="panel-meta"></p>
+        <p id="panel-address"></p>
+        <p id="panel-phone"></p>
+        <a id="panel-website" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <a id="panel-gmaps" href="#" target="_blank" rel="noopener noreferrer" class="gmaps-btn">
+          View in Google Maps
+        </a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLs="
+          crossorigin=""></script>
+
+  <script src="js/map.js"></script>
+</body>
+</html>
