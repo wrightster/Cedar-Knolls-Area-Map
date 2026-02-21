@@ -133,6 +133,7 @@ body {
 #main-content {
   display: flex;
   flex: 1;
+  min-height: 0; /* lets flex children resolve height: 100% correctly */
   overflow: hidden;
   position: relative;
 }
@@ -141,7 +142,8 @@ body {
 #map {
   flex: 1;
   min-width: 0;
-  height: 100%;
+  /* height set by flex align-items: stretch (default) — do NOT use height: 100% here;
+     Leaflet reads offsetHeight at init time and gets 0 when parent height is flex-only */
   z-index: 1;
 }
 
