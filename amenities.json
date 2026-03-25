@@ -1,6 +1,6 @@
 {
-  "center": { "lat": 36.0249, "lng": -78.4698, "label": "Cedar Knolls" },
-  "radiusMiles": 8,
+  "center": { "lat": 36.0700542, "lng": -78.5564438, "label": "Cedar Knolls" },
+  "radiusMiles": 15,
   "categories": [
     { "id": "grocery",    "label": "Grocery",     "color": "#4CAF50" },
     { "id": "park",       "label": "Parks",        "color": "#8BC34A" },
@@ -17,25 +17,25 @@
       "id": "1",
       "name": "Food Lion",
       "category": "grocery",
-      "lat": 36.0297,
-      "lng": -78.4762,
-      "address": "102 N Main St, Youngsville, NC 27596",
-      "phone": "(919) 556-0203",
+      "lat": 36.0391936,
+      "lng": -78.4967158,
+      "address": "1160 US-1 N, Youngsville, NC 27596",
+      "phone": "(919) 554-1639",
       "website": "https://www.foodlion.com",
-      "distanceMiles": 0.6,
-      "googleMapsUrl": "https://maps.google.com/?q=Food+Lion+102+N+Main+St+Youngsville+NC"
+      "distanceMiles": 4.0,
+      "googleMapsUrl": "https://maps.google.com/?q=Food+Lion+1160+US-1+N+Youngsville+NC"
     },
     {
       "id": "2",
       "name": "Harris Teeter",
       "category": "grocery",
-      "lat": 35.9756,
-      "lng": -78.5098,
-      "address": "12200 Capital Blvd, Wake Forest, NC 27587",
+      "lat": 36.0053335,
+      "lng": -78.5183156,
+      "address": "13686 Capital Blvd, Wake Forest, NC 27587",
       "phone": "(919) 554-0126",
       "website": "https://www.harristeeter.com",
-      "distanceMiles": 4.2,
-      "googleMapsUrl": "https://maps.google.com/?q=Harris+Teeter+12200+Capital+Blvd+Wake+Forest+NC"
+      "distanceMiles": 5.0,
+      "googleMapsUrl": "https://maps.google.com/?q=Harris+Teeter+13686+Capital+Blvd+Wake+Forest+NC"
     },
     {
       "id": "3",
@@ -46,7 +46,7 @@
       "address": "12000 Capital Blvd, Wake Forest, NC 27587",
       "phone": "(919) 453-0017",
       "website": "https://www.walmart.com",
-      "distanceMiles": 4.9,
+      "distanceMiles": 7.2,
       "googleMapsUrl": "https://maps.google.com/?q=Walmart+Supercenter+12000+Capital+Blvd+Wake+Forest+NC"
     },
     {
@@ -58,8 +58,32 @@
       "address": "11721 Capital Blvd, Wake Forest, NC 27587",
       "phone": "(919) 556-3091",
       "website": "https://www.publix.com",
-      "distanceMiles": 3.7,
+      "distanceMiles": 6.7,
       "googleMapsUrl": "https://maps.google.com/?q=Publix+11721+Capital+Blvd+Wake+Forest+NC"
+    },
+    {
+      "id": "34",
+      "name": "Wegmans",
+      "category": "grocery",
+      "lat": 35.9638122,
+      "lng": -78.5341134,
+      "address": "11051 Ligon Mill Rd, Wake Forest, NC 27587",
+      "phone": "",
+      "website": "https://www.wegmans.com",
+      "distanceMiles": 7.4,
+      "googleMapsUrl": "https://maps.google.com/?q=Wegmans+11051+Ligon+Mill+Rd+Wake+Forest+NC"
+    },
+    {
+      "id": "35",
+      "name": "Lowes Foods",
+      "category": "grocery",
+      "lat": 35.9855822,
+      "lng": -78.5324773,
+      "address": "12524 Capital Blvd, Wake Forest, NC 27587",
+      "phone": "",
+      "website": "https://www.lowesfoods.com",
+      "distanceMiles": 6.0,
+      "googleMapsUrl": "https://maps.google.com/?q=Lowes+Foods+12524+Capital+Blvd+Wake+Forest+NC"
     },
     {
       "id": "5",
@@ -69,20 +93,20 @@
       "lng": -78.4801,
       "address": "206 W College St, Youngsville, NC 27596",
       "phone": "(919) 556-2045",
-      "website": "https://www.youngsvillenc.gov",
-      "distanceMiles": 0.8,
+      "website": "https://www.townofyoungsville.org",
+      "distanceMiles": 5.0,
       "googleMapsUrl": "https://maps.google.com/?q=Youngsville+Community+Park+Youngsville+NC"
     },
     {
       "id": "6",
-      "name": "Joyner Park",
+      "name": "E. Carroll Joyner Park",
       "category": "park",
       "lat": 35.9961,
       "lng": -78.5087,
       "address": "701 Harris Rd, Wake Forest, NC 27587",
       "phone": "(919) 435-9541",
       "website": "https://www.wakeforestnc.gov/parks",
-      "distanceMiles": 3.1,
+      "distanceMiles": 5.8,
       "googleMapsUrl": "https://maps.google.com/?q=Joyner+Park+701+Harris+Rd+Wake+Forest+NC"
     },
     {
@@ -94,7 +118,7 @@
       "address": "1024 Graham Dr, Louisburg, NC 27549",
       "phone": "(919) 496-3032",
       "website": "https://www.franklincountync.us",
-      "distanceMiles": 5.6,
+      "distanceMiles": 6.2,
       "googleMapsUrl": "https://maps.google.com/?q=Franklin+County+Recreation+Park+Louisburg+NC"
     },
     {
@@ -106,7 +130,7 @@
       "address": "701 Harris Rd, Wake Forest, NC 27587",
       "phone": "(919) 435-9541",
       "website": "https://www.wakeforestnc.gov/parks",
-      "distanceMiles": 3.0,
+      "distanceMiles": 5.6,
       "googleMapsUrl": "https://maps.google.com/?q=Joyner+Park+Trail+Wake+Forest+NC"
     },
     {
@@ -115,22 +139,22 @@
       "category": "gym",
       "lat": 35.9712,
       "lng": -78.5187,
-      "address": "11600 Capital Blvd, Wake Forest, NC 27587",
+      "address": "907 Wrigley Dr, Wake Forest, NC 27587",
       "phone": "(919) 453-0210",
       "website": "https://www.planetfitness.com",
-      "distanceMiles": 4.8,
-      "googleMapsUrl": "https://maps.google.com/?q=Planet+Fitness+11600+Capital+Blvd+Wake+Forest+NC"
+      "distanceMiles": 7.1,
+      "googleMapsUrl": "https://maps.google.com/?q=Planet+Fitness+Wake+Forest+NC"
     },
     {
       "id": "10",
-      "name": "Wake Forest YMCA",
+      "name": "Banks D. Kerr Family YMCA",
       "category": "gym",
       "lat": 35.9792,
       "lng": -78.5231,
       "address": "1220 Stadium Dr, Wake Forest, NC 27587",
       "phone": "(919) 556-9622",
       "website": "https://www.triangleymca.org",
-      "distanceMiles": 4.4,
+      "distanceMiles": 6.5,
       "googleMapsUrl": "https://maps.google.com/?q=YMCA+Wake+Forest+NC"
     },
     {
@@ -142,8 +166,20 @@
       "address": "12300 Capital Blvd Ste 114, Wake Forest, NC 27587",
       "phone": "(919) 453-9750",
       "website": "https://www.anytimefitness.com",
-      "distanceMiles": 4.3,
+      "distanceMiles": 6.9,
       "googleMapsUrl": "https://maps.google.com/?q=Anytime+Fitness+Wake+Forest+NC"
+    },
+    {
+      "id": "37",
+      "name": "Orangetheory Fitness",
+      "category": "gym",
+      "lat": 35.9887026,
+      "lng": -78.529604,
+      "address": "12646 Capital Blvd, Wake Forest, NC 27587",
+      "phone": "",
+      "website": "https://www.orangetheory.com",
+      "distanceMiles": 5.8,
+      "googleMapsUrl": "https://maps.google.com/?q=Orangetheory+Fitness+Wake+Forest+NC"
     },
     {
       "id": "12",
@@ -154,7 +190,7 @@
       "address": "108 N Main St, Youngsville, NC 27596",
       "phone": "(919) 556-2123",
       "website": "",
-      "distanceMiles": 0.7,
+      "distanceMiles": 5.1,
       "googleMapsUrl": "https://maps.google.com/?q=Youngsville+Baptist+Church+Youngsville+NC"
     },
     {
@@ -166,7 +202,7 @@
       "address": "201 W College St, Youngsville, NC 27596",
       "phone": "(919) 556-3401",
       "website": "",
-      "distanceMiles": 0.9,
+      "distanceMiles": 5.1,
       "googleMapsUrl": "https://maps.google.com/?q=Youngsville+United+Methodist+Church+NC"
     },
     {
@@ -178,7 +214,7 @@
       "address": "1215 N White St, Wake Forest, NC 27587",
       "phone": "(919) 556-3753",
       "website": "https://www.wfbaptist.com",
-      "distanceMiles": 4.2,
+      "distanceMiles": 6.4,
       "googleMapsUrl": "https://maps.google.com/?q=Wake+Forest+Baptist+Church+NC"
     },
     {
@@ -190,7 +226,7 @@
       "address": "300 S White St, Wake Forest, NC 27587",
       "phone": "(919) 761-1231",
       "website": "https://www.summit.org",
-      "distanceMiles": 4.8,
+      "distanceMiles": 6.9,
       "googleMapsUrl": "https://maps.google.com/?q=Summit+Church+Wake+Forest+NC"
     },
     {
@@ -202,7 +238,7 @@
       "address": "110 S Main St, Youngsville, NC 27596",
       "phone": "(919) 556-5977",
       "website": "https://www.smithfieldsbbq.com",
-      "distanceMiles": 0.7,
+      "distanceMiles": 5.2,
       "googleMapsUrl": "https://maps.google.com/?q=Smithfields+Chicken+BBQ+Youngsville+NC"
     },
     {
@@ -214,8 +250,20 @@
       "address": "204 N Main St, Youngsville, NC 27596",
       "phone": "(919) 570-9990",
       "website": "",
-      "distanceMiles": 0.8,
+      "distanceMiles": 5.2,
       "googleMapsUrl": "https://maps.google.com/?q=Mi+Cancun+Youngsville+NC"
+    },
+    {
+      "id": "36",
+      "name": "Charron's Deli & Cafe",
+      "category": "restaurant",
+      "lat": 36.0247007,
+      "lng": -78.4756527,
+      "address": "120 E Main St, Youngsville, NC 27596",
+      "phone": "",
+      "website": "",
+      "distanceMiles": 5.5,
+      "googleMapsUrl": "https://maps.google.com/?q=Charron's+Deli+Cafe+Youngsville+NC"
     },
     {
       "id": "18",
@@ -226,43 +274,43 @@
       "address": "12101 Capital Blvd, Wake Forest, NC 27587",
       "phone": "(919) 453-0041",
       "website": "https://www.panerabread.com",
-      "distanceMiles": 4.9,
+      "distanceMiles": 6.9,
       "googleMapsUrl": "https://maps.google.com/?q=Panera+Bread+12101+Capital+Blvd+Wake+Forest+NC"
     },
     {
       "id": "19",
-      "name": "Chick-fil-A Wake Forest",
+      "name": "Chick-fil-A",
       "category": "restaurant",
       "lat": 35.9722,
       "lng": -78.5231,
       "address": "11700 Capital Blvd, Wake Forest, NC 27587",
       "phone": "(919) 453-1340",
       "website": "https://www.chick-fil-a.com",
-      "distanceMiles": 5.0,
+      "distanceMiles": 7.0,
       "googleMapsUrl": "https://maps.google.com/?q=Chick-fil-A+Wake+Forest+Capital+Blvd"
     },
     {
       "id": "20",
       "name": "Youngsville Elementary School",
       "category": "school",
-      "lat": 36.0341,
-      "lng": -78.4823,
-      "address": "209 W College St, Youngsville, NC 27596",
+      "lat": 36.0224492,
+      "lng": -78.4818334,
+      "address": "125 US-1A, Youngsville, NC 27596",
       "phone": "(919) 556-5416",
       "website": "https://www.fcs.k12.nc.us",
-      "distanceMiles": 0.9,
+      "distanceMiles": 5.3,
       "googleMapsUrl": "https://maps.google.com/?q=Youngsville+Elementary+School+NC"
     },
     {
       "id": "21",
       "name": "Cedar Creek Middle School",
       "category": "school",
-      "lat": 36.0156,
-      "lng": -78.4891,
-      "address": "3001 Holden Rd, Youngsville, NC 27596",
-      "phone": "(919) 570-7820",
+      "lat": 36.0405526,
+      "lng": -78.4502296,
+      "address": "2228 Cedar Creek Rd, Youngsville, NC 27596",
+      "phone": "(919) 554-4848",
       "website": "https://www.fcs.k12.nc.us",
-      "distanceMiles": 1.3,
+      "distanceMiles": 6.3,
       "googleMapsUrl": "https://maps.google.com/?q=Cedar+Creek+Middle+School+Youngsville+NC"
     },
     {
@@ -274,7 +322,7 @@
       "address": "255 Academic Dr, Franklinton, NC 27525",
       "phone": "(919) 494-2371",
       "website": "https://www.fcs.k12.nc.us",
-      "distanceMiles": 5.4,
+      "distanceMiles": 5.8,
       "googleMapsUrl": "https://maps.google.com/?q=Franklinton+High+School+NC"
     },
     {
@@ -286,7 +334,7 @@
       "address": "1200 S Main St, Wake Forest, NC 27587",
       "phone": "(919) 453-1071",
       "website": "https://www.wfca.com",
-      "distanceMiles": 3.5,
+      "distanceMiles": 6.7,
       "googleMapsUrl": "https://maps.google.com/?q=Wake+Forest+Charter+Academy+NC"
     },
     {
@@ -298,8 +346,32 @@
       "address": "12200 Capital Blvd Ste 130, Wake Forest, NC 27587",
       "phone": "(919) 350-8000",
       "website": "https://www.wakemed.org",
-      "distanceMiles": 4.7,
+      "distanceMiles": 6.9,
       "googleMapsUrl": "https://maps.google.com/?q=WakeMed+Urgent+Care+Wake+Forest+NC"
+    },
+    {
+      "id": "38",
+      "name": "Duke Urgent Care – Heritage",
+      "category": "medical",
+      "lat": 35.9509198,
+      "lng": -78.5223073,
+      "address": "3000 Rogers Rd, Wake Forest, NC 27587",
+      "phone": "",
+      "website": "https://www.dukehealth.org",
+      "distanceMiles": 8.4,
+      "googleMapsUrl": "https://maps.google.com/?q=Duke+Urgent+Care+Heritage+Wake+Forest+NC"
+    },
+    {
+      "id": "39",
+      "name": "MedAccess Urgent Care",
+      "category": "medical",
+      "lat": 36.0283524,
+      "lng": -78.5061043,
+      "address": "700 US-1, Youngsville, NC 27596",
+      "phone": "",
+      "website": "",
+      "distanceMiles": 4.0,
+      "googleMapsUrl": "https://maps.google.com/?q=MedAccess+Urgent+Care+Youngsville+NC"
     },
     {
       "id": "25",
@@ -310,7 +382,7 @@
       "address": "100 N Main St, Youngsville, NC 27596",
       "phone": "(919) 556-8802",
       "website": "https://www.cvs.com",
-      "distanceMiles": 0.7,
+      "distanceMiles": 5.2,
       "googleMapsUrl": "https://maps.google.com/?q=CVS+Pharmacy+Youngsville+NC"
     },
     {
@@ -322,7 +394,7 @@
       "address": "12131 Capital Blvd, Wake Forest, NC 27587",
       "phone": "(919) 453-2095",
       "website": "https://www.walgreens.com",
-      "distanceMiles": 4.5,
+      "distanceMiles": 6.9,
       "googleMapsUrl": "https://maps.google.com/?q=Walgreens+12131+Capital+Blvd+Wake+Forest+NC"
     },
     {
@@ -334,7 +406,7 @@
       "address": "100 Hospital Dr, Louisburg, NC 27549",
       "phone": "(919) 496-5131",
       "website": "https://www.dukehealth.org",
-      "distanceMiles": 5.1,
+      "distanceMiles": 5.5,
       "googleMapsUrl": "https://maps.google.com/?q=Franklin+County+Medical+Center+Louisburg+NC"
     },
     {
@@ -346,7 +418,7 @@
       "address": "12200 Capital Blvd, Wake Forest, NC 27587",
       "phone": "(919) 453-1201",
       "website": "https://www.starbucks.com",
-      "distanceMiles": 4.6,
+      "distanceMiles": 6.8,
       "googleMapsUrl": "https://maps.google.com/?q=Starbucks+12200+Capital+Blvd+Wake+Forest+NC"
     },
     {
@@ -358,7 +430,7 @@
       "address": "11500 Capital Blvd, Wake Forest, NC 27587",
       "phone": "(919) 453-8870",
       "website": "https://www.dunkindonuts.com",
-      "distanceMiles": 5.0,
+      "distanceMiles": 7.0,
       "googleMapsUrl": "https://maps.google.com/?q=Dunkin+11500+Capital+Blvd+Wake+Forest+NC"
     },
     {
@@ -370,7 +442,7 @@
       "address": "1425 N White St, Wake Forest, NC 27587",
       "phone": "(919) 453-1765",
       "website": "",
-      "distanceMiles": 4.3,
+      "distanceMiles": 6.6,
       "googleMapsUrl": "https://maps.google.com/?q=Cupcake+Shoppe+Wake+Forest+NC"
     },
     {
@@ -382,7 +454,7 @@
       "address": "11501 Capital Blvd, Wake Forest, NC 27587",
       "phone": "(919) 453-0983",
       "website": "https://www.target.com",
-      "distanceMiles": 5.1,
+      "distanceMiles": 6.9,
       "googleMapsUrl": "https://maps.google.com/?q=Target+11501+Capital+Blvd+Wake+Forest+NC"
     },
     {
@@ -394,7 +466,7 @@
       "address": "11200 Capital Blvd, Wake Forest, NC 27587",
       "phone": "",
       "website": "",
-      "distanceMiles": 5.3,
+      "distanceMiles": 7.0,
       "googleMapsUrl": "https://maps.google.com/?q=Renaissance+South+Square+Wake+Forest+NC"
     },
     {
@@ -406,7 +478,7 @@
       "address": "10800 Capital Blvd, Wake Forest, NC 27587",
       "phone": "",
       "website": "",
-      "distanceMiles": 5.5,
+      "distanceMiles": 7.1,
       "googleMapsUrl": "https://maps.google.com/?q=Wake+Forest+Crossing+Shopping+Center+NC"
     }
   ]
