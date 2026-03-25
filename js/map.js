@@ -44,24 +44,63 @@
     ).addTo(map);
   }
 
+  // --- Custom place icons ----------------------------------
+  // Maps place name → asset path for branded pin SVGs (512×640)
+  var PLACE_ICONS = {
+    // Grocery
+    'Food Lion':            'assets/FoodLion.svg',
+    'Harris Teeter':        'assets/HarrisTeeter.svg',
+    'Lowes Foods':          'assets/LowesFoods.svg',
+    'Publix Super Market':  'assets/Publix.svg',
+    'Target':               'assets/Target.svg',
+    'Walmart Supercenter':  'assets/Walmart.svg',
+    'Wegmans':              'assets/Wegmans.svg',
+    // Coffee
+    'Starbucks':            'assets/Starbucks.svg',
+    "Dunkin'":              'assets/Dunkin.svg',
+    // Gym
+    'Planet Fitness':       'assets/PlanetFitness.svg',
+    // Restaurant
+    'Chick-fil-A':          'assets/ChickFilA.svg',
+    'Panera Bread':         'assets/PaneraBread.svg',
+    // Medical
+    'CVS Pharmacy':         'assets/CVS.svg',
+    'Walgreens':            'assets/Walgreens.svg',
+  };
+
+  // Maps category id → asset path for category-level pin SVGs
+  var CATEGORY_ICONS = {
+    'park':       'assets/Park.svg',
+    'gym':        'assets/Gym.svg',
+    'church':     'assets/Church.svg',
+    'restaurant': 'assets/Restaurant.svg',
+    'school':     'assets/School.svg',
+    'medical':    'assets/Medical.svg',
+    'coffee':     'assets/Coffee.svg',
+    'shopping':   'assets/Shopping.svg',
+  };
+
+  function makePinIcon(url) {
+    return L.icon({
+      iconUrl: url,
+      iconSize:     [40, 50],
+      iconAnchor:   [20, 50],   // bottom center
+      tooltipAnchor:[0, -50],
+    });
+  }
+
   // --- Home marker -----------------------------------------
   function addHomeMarker(center) {
-    const homeIcon = L.divIcon({
-      className: 'home-marker-icon',
-      html: '<div style="' +
-        'width:18px;height:18px;' +
-        'background:#1a3a2a;' +
-        'border:3px solid #fff;' +
-        'border-radius:50%;' +
-        'box-shadow:0 0 0 2px #1a3a2a,0 2px 6px rgba(0,0,0,0.35);' +
-        '"></div>',
-      iconSize: [18, 18],
-      iconAnchor: [9, 9],
+    const ckIcon = L.icon({
+      iconUrl: 'assets/CedarKnolls.svg',
+      iconSize:     [146, 60],
+      iconAnchor:   [146, 60],  // bottom right
+      tooltipAnchor:[-73, -60],
     });
 
-    L.marker([center.lat, center.lng], { icon: homeIcon, zIndexOffset: 1000 })
+    L.marker([center.lat, center.lng], { icon: ckIcon, zIndexOffset: 1000 })
       .addTo(map)
-      .bindTooltip(center.label, { permanent: false, direction: 'top', offset: [0, -10] });
+      .bindTooltip(center.label, { permanent: false, direction: 'top' });
   }
 
   // --- Build category filter buttons -----------------------
@@ -157,20 +196,32 @@
 
     places.forEach(function (place) {
       const color = colorMap[place.category] || '#607D8B';
-      const marker = L.circleMarker([place.lat, place.lng], {
-        radius: 8,
-        fillColor: color,
-        color: '#fff',
-        weight: 2,
-        opacity: 1,
-        fillOpacity: 0.9,
-      });
+      const iconUrl = PLACE_ICONS[place.name] || CATEGORY_ICONS[place.category];
+      let marker;
 
-      marker.bindTooltip(place.name, {
-        direction: 'top',
-        offset: [0, -8],
-        sticky: false,
-      });
+      if (iconUrl) {
+        marker = L.marker([place.lat, place.lng], {
+          icon: makePinIcon(iconUrl),
+        });
+        marker.bindTooltip(place.name, {
+          direction: 'top',
+          sticky: false,
+        });
+      } else {
+        marker = L.circleMarker([place.lat, place.lng], {
+          radius: 8,
+          fillColor: color,
+          color: '#fff',
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9,
+        });
+        marker.bindTooltip(place.name, {
+          direction: 'top',
+          offset: [0, -8],
+          sticky: false,
+        });
+      }
 
       marker.on('click', function () {
         openPanel(place, colorMap, labelMap);
