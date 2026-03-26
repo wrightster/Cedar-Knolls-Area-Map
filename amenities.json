@@ -2,15 +2,15 @@
   "center": { "lat": 36.0700542, "lng": -78.5564438, "label": "Cedar Knolls" },
   "radiusMiles": 15,
   "categories": [
-    { "id": "grocery",    "label": "Grocery",     "color": "#4CAF50" },
-    { "id": "park",       "label": "Parks",        "color": "#8BC34A" },
-    { "id": "gym",        "label": "Gyms",         "color": "#F44336" },
-    { "id": "church",     "label": "Churches",     "color": "#9C27B0" },
-    { "id": "restaurant", "label": "Restaurants",  "color": "#FF9800" },
-    { "id": "school",     "label": "Schools",      "color": "#2196F3" },
-    { "id": "medical",    "label": "Medical",      "color": "#E91E63" },
-    { "id": "coffee",     "label": "Coffee",       "color": "#795548" },
-    { "id": "shopping",   "label": "Shopping",     "color": "#607D8B" }
+    { "id": "grocery",    "label": "Grocery",     "color": "#1e5f63" },
+    { "id": "park",       "label": "Parks",        "color": "#4a7c45" },
+    { "id": "gym",        "label": "Gyms",         "color": "#154b89" },
+    { "id": "church",     "label": "Churches",     "color": "#8293ca" },
+    { "id": "restaurant", "label": "Restaurants",  "color": "#b8722e" },
+    { "id": "school",     "label": "Schools",      "color": "#008eb5" },
+    { "id": "medical",    "label": "Medical",      "color": "#b54265" },
+    { "id": "coffee",     "label": "Coffee",       "color": "#7a5642" },
+    { "id": "shopping",   "label": "Shopping",     "color": "#5c7a8a" }
   ],
   "places": [
     {
