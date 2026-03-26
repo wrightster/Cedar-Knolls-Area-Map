@@ -15,8 +15,10 @@
   var STYLE_URL = 'https://api.maptiler.com/maps/019d2ac4-1b5c-7824-a78a-30cdcb276433/style.json?key=gctDBtFwdnIhG8N9CFpi';
 
   // --- DOM refs --------------------------------------------
-  var filterBar  = document.getElementById('filter-bar');
-  var sidePanel  = document.getElementById('side-panel');
+  var filterBar     = document.getElementById('filter-bar');
+  var filterToggle  = document.getElementById('filter-toggle');
+  var filterOverlay = document.getElementById('filter-overlay');
+  var sidePanel     = document.getElementById('side-panel');
   var panelClose = document.getElementById('panel-close');
   var panelBadge = document.getElementById('panel-category-badge');
   var panelName  = document.getElementById('panel-name');
@@ -230,8 +232,11 @@
         var mapHeight = map.getContainer().clientHeight;
 
         // Clamp pixel position to just inside the nearEdge zone boundary
-        var targetX = Math.min(Math.max(pixel.x, mapWidth  * 0.25), mapWidth  * 0.75);
-        var targetY = Math.min(Math.max(pixel.y, mapHeight * 0.20), mapHeight * 0.80);
+        // In portrait orientation the panel opens as a bottom footer (~45vh),
+        // so keep the amenity in the upper 55% of the map height instead.
+        var portrait  = mapHeight > mapWidth;
+        var targetX = Math.min(Math.max(pixel.x, mapWidth  * 0.25), mapWidth  * (portrait ? 0.75 : 0.65));
+        var targetY = Math.min(Math.max(pixel.y, mapHeight * 0.20), mapHeight * (portrait ? 0.55 : 0.80));
 
         if (targetX !== pixel.x || targetY !== pixel.y) {
           // Shift the center by the same delta so the amenity lands on the boundary
@@ -337,11 +342,34 @@
         'Unable to load map data. Please try refreshing the page.</div>';
     });
 
+  // --- Filter toggle ---------------------------------------
+  filterToggle.addEventListener('click', function () {
+    var open = filterBar.classList.toggle('open');
+    filterToggle.setAttribute('aria-expanded', String(open));
+    filterBar.setAttribute('aria-hidden', String(!open));
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!filterOverlay.contains(e.target)) {
+      filterBar.classList.remove('open');
+      filterToggle.setAttribute('aria-expanded', 'false');
+      filterBar.setAttribute('aria-hidden', 'true');
+    }
+  });
+
   // --- Close panel -----------------------------------------
   panelClose.addEventListener('click', closePanel);
 
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closePanel();
+    if (e.key === 'Escape') {
+      if (filterBar.classList.contains('open')) {
+        filterBar.classList.remove('open');
+        filterToggle.setAttribute('aria-expanded', 'false');
+        filterBar.setAttribute('aria-hidden', 'true');
+      } else {
+        closePanel();
+      }
+    }
   });
 
 }());

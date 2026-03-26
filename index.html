@@ -16,15 +16,20 @@
 </head>
 <body>
 
-  <!-- Filter Bar -->
-  <nav id="filter-bar" role="navigation" aria-label="Category filters">
-    <button class="filter-btn active" data-category="all">All</button>
-    <!-- Category buttons injected by JS -->
-  </nav>
-
-  <!-- Main content: map + side panel -->
+  <!-- Main content: map + overlays -->
   <div id="main-content">
     <div id="map"></div>
+
+    <!-- Filter overlay: toggle + inline filter pills -->
+    <div id="filter-overlay">
+      <button id="filter-toggle" aria-label="Toggle filters" aria-expanded="false">
+        Filters <span class="chevron">&#9660;</span>
+      </button>
+      <nav id="filter-bar" role="navigation" aria-label="Category filters" aria-hidden="true">
+        <button class="filter-btn active" data-category="all">All</button>
+        <!-- Category buttons injected by JS -->
+      </nav>
+    </div>
 
     <!-- Side Panel -->
     <aside id="side-panel" aria-label="Place details" aria-hidden="true">
