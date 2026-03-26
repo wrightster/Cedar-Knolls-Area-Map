@@ -225,6 +225,23 @@
         popup.remove();
       });
       el.addEventListener('click', function () {
+        var pixel     = map.project([place.lng, place.lat]);
+        var mapWidth  = map.getContainer().clientWidth;
+        var mapHeight = map.getContainer().clientHeight;
+
+        // Clamp pixel position to just inside the nearEdge zone boundary
+        var targetX = Math.min(Math.max(pixel.x, mapWidth  * 0.25), mapWidth  * 0.75);
+        var targetY = Math.min(Math.max(pixel.y, mapHeight * 0.20), mapHeight * 0.80);
+
+        if (targetX !== pixel.x || targetY !== pixel.y) {
+          // Shift the center by the same delta so the amenity lands on the boundary
+          var newCenter = map.unproject([
+            mapWidth  / 2 + (pixel.x - targetX),
+            mapHeight / 2 + (pixel.y - targetY),
+          ]);
+          map.easeTo({ center: newCenter, duration: 500 });
+        }
+
         openPanel(place, colorMap, labelMap);
       });
 
