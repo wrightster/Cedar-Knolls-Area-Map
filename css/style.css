@@ -157,19 +157,40 @@ body {
 #side-panel {
   width: 320px;
   background: #f9f8f2;
-  border-left: 1px solid #d6d4c8;
   border-top: 3px solid #b6cc9e;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  transform: translateX(100%);
+  overflow: hidden;
+  padding-right: 6px;
+  transform: translateX(calc(100% + 10px));
   transition: transform 0.25s ease;
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  top: 10px;
+  right: 10px;
+  bottom: 10px;
   z-index: 10;
-  box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+}
+
+#panel-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+#panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#panel-scroll::-webkit-scrollbar-button {
+  height: 20px;
+  display: block;
+  background: #f9f8f2;
+  color: #f9f8f2;
+}
+
+#panel-scroll::-webkit-scrollbar-thumb {
+  background-color: #1e5f63;
+  border-radius: 999px;
 }
 
 #side-panel.open {
@@ -195,6 +216,23 @@ body {
 #panel-close:hover {
   color: #231f20;
   background: #f0ede4;
+}
+
+#panel-scroll {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 6px;
+  bottom: 0;
+  overflow-y: auto;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  #panel-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #1e5f63 transparent;
+    scrollbar-gutter: stable;
+  }
 }
 
 #panel-content {
@@ -314,13 +352,15 @@ body {
   outline-offset: 2px;
 }
 
+/* --- Minimum height: hide panel when too collapsed -------- */
+@media (max-height: 200px) {
+  #side-panel {
+    display: none;
+  }
+}
+
 /* --- Mobile adjustments ----------------------------------- */
 @media (max-width: 768px) {
-  #side-panel {
-    width: 100%;
-    border-left: none;
-  }
-
   .filter-btn {
     padding: 4px 11px;
     font-size: 0.75rem;
@@ -331,25 +371,28 @@ body {
 @media (orientation: portrait) {
   #side-panel {
     top: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    width: auto;
     height: auto;
     max-height: 45vh;
-    border-left: none;
     border-top: 3px solid #b6cc9e;
-    border-right: none;
-    box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
-    transform: translateY(100%);
-    overflow-y: auto;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+    transform: translateY(calc(100% + 10px));
   }
 
   #side-panel.open {
     transform: translateY(0);
   }
 
-  #panel-content {
+  #panel-scroll {
+    position: static;
+    flex: 1;
+    min-height: 0;
+  }
+
+#panel-content {
     padding: 16px 18px 24px;
   }
 
