@@ -155,7 +155,7 @@ body {
 
 /* --- Side Panel ------------------------------------------- */
 #side-panel {
-  width: 320px;
+  width: min(320px, 50vw);
   background: #f9f8f2;
   border-top: 3px solid #b6cc9e;
   border-radius: 12px;
@@ -246,7 +246,7 @@ body {
   display: inline-block;
   padding: 3px 10px;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: clamp(0.5rem, 1.75vw, 0.7rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -256,7 +256,7 @@ body {
 }
 
 #panel-name {
-  font-size: 1.15rem;
+  font-size: clamp(0.75rem, 2.875vw, 1.15rem);
   font-weight: 700;
   line-height: 1.3;
   color: #231f20;
@@ -265,13 +265,13 @@ body {
 }
 
 #panel-meta {
-  font-size: 0.8rem;
+  font-size: clamp(0.55rem, 2vw, 0.8rem);
   color: #6b6761;
   font-weight: 500;
 }
 
 #panel-address {
-  font-size: 0.85rem;
+  font-size: clamp(0.6rem, 2.125vw, 0.85rem);
   color: #3d3a37;
   line-height: 1.5;
 }
@@ -281,7 +281,7 @@ body {
 }
 
 #panel-phone {
-  font-size: 0.85rem;
+  font-size: clamp(0.6rem, 2.125vw, 0.85rem);
   color: #3d3a37;
 }
 
@@ -290,7 +290,7 @@ body {
 }
 
 #panel-website {
-  font-size: 0.85rem;
+  font-size: clamp(0.6rem, 2.125vw, 0.85rem);
   color: #154b89;
   text-decoration: none;
   word-break: break-all;
@@ -313,7 +313,7 @@ body {
   color: #fff;
   text-align: center;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: clamp(0.65rem, 2.25vw, 0.9rem);
   font-weight: 600;
   text-decoration: none;
   transition: background 0.15s;
@@ -367,6 +367,51 @@ body {
   }
 }
 
+/* --- Filter: horizontal row to the right (portrait) --- */
+@media (orientation: portrait) {
+  #filter-overlay {
+    right: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  #filter-bar {
+    position: static;
+    flex: 1;
+    min-width: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    transform: translateX(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  #filter-bar.open {
+    transform: translateX(0);
+  }
+
+  #filter-toggle .chevron {
+    transform: rotate(-90deg); /* ► points right */
+  }
+
+  #filter-toggle[aria-expanded="true"] .chevron {
+    transform: rotate(90deg); /* ◄ points left */
+  }
+}
+
+/* --- Filter: compact vertical list (landscape, short viewport) --- */
+@media (orientation: landscape) and (max-height: 500px) {
+  .filter-btn {
+    padding: 3px 9px;
+    font-size: 0.7rem;
+    gap: 4px;
+  }
+
+  #filter-bar {
+    gap: 3px;
+  }
+}
+
 /* --- Portrait: side panel becomes bottom footer ----------- */
 @media (orientation: portrait) {
   #side-panel {
@@ -396,7 +441,11 @@ body {
     padding: 16px 18px 24px;
   }
 
-  #panel-name {
-    padding-right: 36px;
-  }
+  #panel-name           { padding-right: 36px; font-size: 1.15rem; }
+  #panel-category-badge { font-size: 0.7rem;  }
+  #panel-meta           { font-size: 0.8rem;  }
+  #panel-address        { font-size: 0.85rem; }
+  #panel-phone          { font-size: 0.85rem; }
+  #panel-website        { font-size: 0.85rem; }
+  .gmaps-btn            { font-size: 0.9rem;  }
 }
