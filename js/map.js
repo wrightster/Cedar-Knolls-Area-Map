@@ -14,6 +14,7 @@
   var photosMap = {};
   var ckCenter = null;
   var distanceLabelMarker = null;
+  var spiderAnim = null;   // requestAnimationFrame id for spread animation
 
   var STYLE_URL = 'https://api.maptiler.com/maps/019d2ac4-1b5c-7824-a78a-30cdcb276433/style.json?key=gctDBtFwdnIhG8N9CFpi';
 
@@ -155,6 +156,8 @@
   function hideGroup(categoryId) {
     markerGroups[categoryId].forEach(function (item) {
       item.popup.remove();
+      item.marker.setOffset([0, 0]);
+      item._spiderOffset = null;
       item.marker.remove();
     });
   }
@@ -225,7 +228,9 @@
       }).setText(place.name);
 
       el.addEventListener('mouseenter', function () {
-        popup.setLngLat([place.lng, place.lat]).addTo(map);
+        var pt  = map.project([place.lng, place.lat]);
+        var off = marker.getOffset();
+        popup.setLngLat(map.unproject([pt.x + off.x, pt.y + off.y])).addTo(map);
       });
       el.addEventListener('mouseleave', function () {
         popup.remove();
@@ -263,6 +268,150 @@
 
       markerGroups[place.category].push({ marker: marker, popup: popup });
     });
+  }
+
+  // --- Spiderfy --------------------------------------------
+  function addSpiderLineLayer() {
+    map.addSource('spider-lines', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] },
+    });
+    map.addLayer({
+      id: 'spider-lines',
+      type: 'line',
+      source: 'spider-lines',
+      paint: {
+        'line-color': 'rgba(80,80,80,0.45)',
+        'line-width': 1.5,
+      },
+    });
+  }
+
+  function cancelSpiderAnim() {
+    if (spiderAnim !== null) { cancelAnimationFrame(spiderAnim); spiderAnim = null; }
+  }
+
+  // Redraws lines to match current dot positions without recomputing the layout.
+  // Called on every move frame so lines stay attached to their dots during scroll/zoom.
+  function updateSpiderLines() {
+    var features = [];
+    Object.keys(markerGroups).forEach(function (catId) {
+      markerGroups[catId].forEach(function (entry) {
+        var off = entry._spiderOffset;
+        if (!off || (Math.abs(off[0]) < 0.5 && Math.abs(off[1]) < 0.5)) return;
+        if (!entry.marker.getElement().isConnected) return;
+        var lngLat = entry.marker.getLngLat();
+        var pt = map.project(lngLat);
+        var spreadLngLat = map.unproject([pt.x + off[0], pt.y + off[1]]);
+        features.push({
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [
+              [lngLat.lng, lngLat.lat],
+              [spreadLngLat.lng, spreadLngLat.lat],
+            ],
+          },
+        });
+      });
+    });
+    map.getSource('spider-lines').setData({ type: 'FeatureCollection', features: features });
+  }
+
+  function runSpiderfy() {
+    cancelSpiderAnim();
+
+    var MIN_DIST = 22;   // px — just above marker visual diameter (16px + 2px border each side)
+    var MAX_ITER = 100;
+    var DURATION = 400;  // ms for the snap-in animation
+
+    // Cold-start from real positions so the target is always the minimum
+    // separation needed at the current zoom level.
+    var items = [];
+    Object.keys(markerGroups).forEach(function (catId) {
+      markerGroups[catId].forEach(function (entry) {
+        if (!entry.marker.getElement().isConnected) return;
+        var lngLat = entry.marker.getLngLat();
+        var pt = map.project(lngLat);
+        items.push({ entry: entry, marker: entry.marker, lngLat: lngLat,
+                     origX: pt.x, origY: pt.y, x: pt.x, y: pt.y });
+      });
+    });
+
+    // Iterative pairwise separation — push each overlapping pair apart by the
+    // minimum distance needed.  Repeating until settled means any new overlaps
+    // introduced by a prior push are also resolved, so no marker ever ends up
+    // overlapping a neighbour it was clear of before.
+    for (var iter = 0; iter < MAX_ITER; iter++) {
+      var settled = true;
+      for (var i = 0; i < items.length; i++) {
+        for (var j = i + 1; j < items.length; j++) {
+          var dx = items[j].x - items[i].x;
+          var dy = items[j].y - items[i].y;
+          var distSq = dx * dx + dy * dy;
+          if (distSq >= MIN_DIST * MIN_DIST) continue;
+          settled = false;
+          var dist = Math.sqrt(distSq);
+          var push = (MIN_DIST - dist) / 2;
+          var nx, ny;
+          if (dist < 0.01) {
+            var a = (i + j * 2.399963);
+            nx = Math.cos(a); ny = Math.sin(a);
+          } else {
+            nx = dx / dist; ny = dy / dist;
+          }
+          items[i].x -= nx * push;
+          items[i].y -= ny * push;
+          items[j].x += nx * push;
+          items[j].y += ny * push;
+        }
+      }
+      if (settled) break;
+    }
+
+    // Store start (current) and target offsets for each item, then animate.
+    items.forEach(function (item) {
+      var prev = item.entry._spiderOffset || [0, 0];
+      item.startOx = prev[0];
+      item.startOy = prev[1];
+      item.targetOx = item.x - item.origX;
+      item.targetOy = item.y - item.origY;
+    });
+
+    var startTime = performance.now();
+
+    function frame(now) {
+      var t = Math.min((now - startTime) / DURATION, 1);
+      var ease = 1 - Math.pow(1 - t, 3);  // cubic ease-out
+
+      var features = [];
+      items.forEach(function (item) {
+        var ox = item.startOx + (item.targetOx - item.startOx) * ease;
+        var oy = item.startOy + (item.targetOy - item.startOy) * ease;
+        if (Math.abs(ox) < 0.5 && Math.abs(oy) < 0.5) { ox = 0; oy = 0; }
+
+        item.marker.setOffset([ox, oy]);
+        item.entry._spiderOffset = [ox, oy];
+
+        if (ox === 0 && oy === 0) return;
+        var spreadLngLat = map.unproject([item.origX + ox, item.origY + oy]);
+        features.push({
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [
+              [item.lngLat.lng, item.lngLat.lat],
+              [spreadLngLat.lng, spreadLngLat.lat],
+            ],
+          },
+        });
+      });
+
+      map.getSource('spider-lines').setData({ type: 'FeatureCollection', features: features });
+      spiderAnim = (t < 1) ? requestAnimationFrame(frame) : null;
+    }
+
+    spiderAnim = requestAnimationFrame(frame);
   }
 
   // --- Distance line ---------------------------------------
@@ -399,10 +548,14 @@
 
       initMap(allData.center).then(function () {
         ckCenter = allData.center;
+        addSpiderLineLayer();
         addDistanceLineLayer();
         addHomeMarker(allData.center);
         buildFilterButtons(allData.categories);
         buildMarkers(allData.places, allData.categories);
+        map.on('movestart', cancelSpiderAnim);
+        map.on('move', updateSpiderLines);
+        map.on('idle', runSpiderfy);
 
         var allBtn = filterBar.querySelector('[data-category="all"]');
         if (allBtn) {
