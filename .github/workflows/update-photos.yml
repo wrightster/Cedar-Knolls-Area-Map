@@ -1,0 +1,34 @@
+name: Update Place Photos
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'   # 1st of every month, 06:00 UTC
+  workflow_dispatch:        # allows manual trigger from GitHub UI
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # required to push the commit back to main
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch photos
+        env:
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+        run: node scripts/fetch-photos.js
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add amenities.json photos.json assets/photos/
+          git diff --cached --quiet || git commit -m "chore: update place photos [skip ci]"
+          git push

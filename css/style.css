@@ -449,3 +449,35 @@ body {
   #panel-website        { font-size: 0.85rem; }
   .gmaps-btn            { font-size: 0.9rem;  }
 }
+
+/* --- Panel photo ------------------------------------------ */
+#panel-photo-wrap {
+  margin: -20px -18px 0;         /* bleed to panel-content padding edges */
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;  /* match #side-panel top-radius */
+}
+
+#panel-photo {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  object-position: center;
+}
+
+#panel-photo-attr {
+  font-size: 0.6rem;
+  color: #6b6761;
+  text-align: right;
+  padding: 3px 8px 0;
+  font-style: italic;
+}
+
+@media (orientation: portrait) {
+  #panel-photo-wrap {
+    margin: -16px -18px 0;  /* portrait panel-content padding-top is 16px */
+  }
+  #panel-photo {
+    height: 130px;
+  }
+}

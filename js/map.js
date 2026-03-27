@@ -11,6 +11,7 @@
   var markerGroups = {};     // { categoryId: [ {marker, popup}, ... ] }
   var activeCategories = new Set(['all']);
   var currentPlace = null;
+  var photosMap = {};
 
   var STYLE_URL = 'https://api.maptiler.com/maps/019d2ac4-1b5c-7824-a78a-30cdcb276433/style.json?key=gctDBtFwdnIhG8N9CFpi';
 
@@ -27,6 +28,8 @@
   var panelPhone = document.getElementById('panel-phone');
   var panelWeb   = document.getElementById('panel-website');
   var panelGmaps = document.getElementById('panel-gmaps');
+  var panelPhotoWrap = document.getElementById('panel-photo-wrap');
+  var panelPhoto     = document.getElementById('panel-photo');
 
   // --- Custom place icons ----------------------------------
   var PLACE_ICONS = {
@@ -267,6 +270,17 @@
     var color = colorMap[place.category] || '#607D8B';
     var label = labelMap[place.category] || place.category;
 
+    var photoPath = photosMap[place.id];
+    if (photoPath) {
+      panelPhoto.src = photoPath;
+      panelPhoto.alt = place.name;
+      panelPhotoWrap.style.display = '';
+    } else {
+      panelPhoto.src = '';
+      panelPhoto.alt = '';
+      panelPhotoWrap.style.display = 'none';
+    }
+
     panelBadge.textContent = label;
     panelBadge.style.background = color;
 
@@ -314,18 +328,24 @@
   }
 
   // --- Bootstrap -------------------------------------------
-  fetch('amenities.json')
-    .then(function (res) {
-      if (!res.ok) throw new Error('Failed to load amenities.json: ' + res.status);
-      return res.json();
-    })
-    .then(function (data) {
-      allData = data;
+  Promise.all([
+    fetch('amenities.json').then(function (r) {
+      if (!r.ok) throw new Error('Failed to load amenities.json: ' + r.status);
+      return r.json();
+    }),
+    fetch('photos.json').then(function (r) {
+      if (!r.ok) return {};   // graceful: photos.json absent before first workflow run
+      return r.json();
+    }),
+  ])
+    .then(function (results) {
+      allData   = results[0];
+      photosMap = results[1];
 
-      initMap(data.center).then(function () {
-        addHomeMarker(data.center);
-        buildFilterButtons(data.categories);
-        buildMarkers(data.places, data.categories);
+      initMap(allData.center).then(function () {
+        addHomeMarker(allData.center);
+        buildFilterButtons(allData.categories);
+        buildMarkers(allData.places, allData.categories);
 
         var allBtn = filterBar.querySelector('[data-category="all"]');
         if (allBtn) {
