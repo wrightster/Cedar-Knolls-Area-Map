@@ -448,7 +448,8 @@
         item.entry._spiderOffset = [ox, oy];
 
         if (ox === 0 && oy === 0) return;
-        var spreadLngLat = map.unproject([item.origX + ox, item.origY + oy]);
+        var pt = map.project(item.lngLat);
+        var spreadLngLat = map.unproject([pt.x + ox, pt.y + oy]);
         features.push({
           type: 'Feature',
           geometry: {
