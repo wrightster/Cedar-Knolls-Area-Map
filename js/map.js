@@ -16,6 +16,7 @@
   var distanceLabelMarker = null;
   var selectedMarkerEl = null;
   var spiderAnim = null;   // requestAnimationFrame id for spread animation
+  var lastZoom = null;
 
   var STYLE_URL = 'https://api.maptiler.com/maps/019d2ac4-1b5c-7824-a78a-30cdcb276433/style.json?key=gctDBtFwdnIhG8N9CFpi';
 
@@ -330,64 +331,105 @@
     map.getSource('spider-lines').setData({ type: 'FeatureCollection', features: features });
   }
 
-  function runSpiderfy() {
+  function runSpiderfy(anchorSelected, warmStart) {
     cancelSpiderAnim();
 
-    var MIN_DIST = 22;   // px — just above marker visual diameter (16px + 2px border each side)
+    var NORMAL_RADIUS   = 11;   // px — half of 22px min clearance between normal dots
+    var SELECTED_RADIUS = 18;   // px — larger footprint for the selected dot
     var MAX_ITER = 100;
     var DURATION = 400;  // ms for the snap-in animation
 
-    // Cold-start from real positions so the target is always the minimum
-    // separation needed at the current zoom level.
+    // Collect all items with their real map positions and current visual offsets.
     var items = [];
     Object.keys(markerGroups).forEach(function (catId) {
       markerGroups[catId].forEach(function (entry) {
         if (!entry.marker.getElement().isConnected) return;
         var lngLat = entry.marker.getLngLat();
         var pt = map.project(lngLat);
+        var isSelected = entry.marker.getElement() === selectedMarkerEl;
+        var prev = entry._spiderOffset || [0, 0];
         items.push({ entry: entry, marker: entry.marker, lngLat: lngLat,
-                     origX: pt.x, origY: pt.y, x: pt.x, y: pt.y });
+                     origX: pt.x, origY: pt.y, isSelected: isSelected, prev: prev });
       });
     });
 
-    // Iterative pairwise separation — push each overlapping pair apart by the
-    // minimum distance needed.  Repeating until settled means any new overlaps
-    // introduced by a prior push are also resolved, so no marker ever ends up
-    // overlapping a neighbour it was clear of before.
+    // Pass 1 — natural layout: all dots cold-start with normal radius.
+    // This gives each dot a "home" position to return to when not being pushed.
+    var nat = items.map(function (item) { return { x: item.origX, y: item.origY }; });
     for (var iter = 0; iter < MAX_ITER; iter++) {
       var settled = true;
       for (var i = 0; i < items.length; i++) {
         for (var j = i + 1; j < items.length; j++) {
-          var dx = items[j].x - items[i].x;
-          var dy = items[j].y - items[i].y;
+          var dx = nat[j].x - nat[i].x, dy = nat[j].y - nat[i].y;
           var distSq = dx * dx + dy * dy;
-          if (distSq >= MIN_DIST * MIN_DIST) continue;
+          var minDist = NORMAL_RADIUS * 2;
+          if (distSq >= minDist * minDist) continue;
           settled = false;
           var dist = Math.sqrt(distSq);
-          var push = (MIN_DIST - dist) / 2;
+          var push = (minDist - dist) / 2;
           var nx, ny;
-          if (dist < 0.01) {
-            var a = (i + j * 2.399963);
-            nx = Math.cos(a); ny = Math.sin(a);
-          } else {
-            nx = dx / dist; ny = dy / dist;
-          }
-          items[i].x -= nx * push;
-          items[i].y -= ny * push;
-          items[j].x += nx * push;
-          items[j].y += ny * push;
+          if (dist < 0.01) { var a = i + j * 2.399963; nx = Math.cos(a); ny = Math.sin(a); }
+          else { nx = dx / dist; ny = dy / dist; }
+          nat[i].x -= nx * push; nat[i].y -= ny * push;
+          nat[j].x += nx * push; nat[j].y += ny * push;
         }
       }
       if (settled) break;
     }
 
-    // Store start (current) and target offsets for each item, then animate.
-    items.forEach(function (item) {
-      var prev = item.entry._spiderOffset || [0, 0];
-      item.startOx = prev[0];
-      item.startOy = prev[1];
-      item.targetOx = item.x - item.origX;
-      item.targetOy = item.y - item.origY;
+    // Pass 2 — selection layout: non-selected start from their natural homes;
+    // selected dot is anchored at its current visual position with a larger radius.
+    // Only dots that collide with the selected dot get pushed further out.
+    // For zoom-out: warm-start (dots hold position).
+    // For selection: each dot uses its natural home if it's nearby, otherwise warm-starts.
+    // This prevents scrambling at extreme zoom-out where nat and prev diverge significantly.
+    var SNAP_THRESHOLD_SQ = (NORMAL_RADIUS * 4) * (NORMAL_RADIUS * 4);
+    var fin = items.map(function (item, idx) {
+      var prevX = item.origX + item.prev[0], prevY = item.origY + item.prev[1];
+      if (warmStart) return { x: prevX, y: prevY };
+      // Zoom-in always cold-starts so stuck dots can always return home.
+      // Selection uses a threshold: only return to natural home if the displacement
+      // is small (normal zoom); warm-start if it's large (extreme zoom-out) to avoid scrambling.
+      if (!anchorSelected) return { x: nat[idx].x, y: nat[idx].y };
+      var dx = nat[idx].x - prevX, dy = nat[idx].y - prevY;
+      return (dx * dx + dy * dy <= SNAP_THRESHOLD_SQ)
+        ? { x: nat[idx].x, y: nat[idx].y }
+        : { x: prevX, y: prevY };
+    });
+    for (var iter2 = 0; iter2 < MAX_ITER; iter2++) {
+      var settled2 = true;
+      for (var i = 0; i < items.length; i++) {
+        for (var j = i + 1; j < items.length; j++) {
+          var dx = fin[j].x - fin[i].x, dy = fin[j].y - fin[i].y;
+          var distSq = dx * dx + dy * dy;
+          var minDist = (items[i].isSelected ? SELECTED_RADIUS : NORMAL_RADIUS)
+                      + (items[j].isSelected ? SELECTED_RADIUS : NORMAL_RADIUS);
+          if (distSq >= minDist * minDist) continue;
+          settled2 = false;
+          var dist = Math.sqrt(distSq);
+          var push = (minDist - dist) / 2;
+          var nx, ny;
+          if (dist < 0.01) { var a = i + j * 2.399963; nx = Math.cos(a); ny = Math.sin(a); }
+          else { nx = dx / dist; ny = dy / dist; }
+          if (items[i].isSelected) {
+            fin[j].x += nx * push * 2; fin[j].y += ny * push * 2;
+          } else if (items[j].isSelected) {
+            fin[i].x -= nx * push * 2; fin[i].y -= ny * push * 2;
+          } else {
+            fin[i].x -= nx * push; fin[i].y -= ny * push;
+            fin[j].x += nx * push; fin[j].y += ny * push;
+          }
+        }
+      }
+      if (settled2) break;
+    }
+
+    // Animate from current visual offsets to the computed target offsets.
+    items.forEach(function (item, idx) {
+      item.startOx = item.prev[0];
+      item.startOy = item.prev[1];
+      item.targetOx = fin[idx].x - item.origX;
+      item.targetOy = fin[idx].y - item.origY;
     });
 
     var startTime = performance.now();
@@ -484,6 +526,7 @@
     if (selectedMarkerEl) getDot(selectedMarkerEl).classList.remove('selected');
     selectedMarkerEl = markerEl || null;
     if (selectedMarkerEl) getDot(selectedMarkerEl).classList.add('selected');
+    runSpiderfy(true);
     var color = colorMap[place.category] || '#607D8B';
     var label = labelMap[place.category] || place.category;
 
@@ -543,6 +586,7 @@
     sidePanel.setAttribute('aria-hidden', 'true');
     currentPlace = null;
     if (selectedMarkerEl) { getDot(selectedMarkerEl).classList.remove('selected'); selectedMarkerEl = null; }
+    runSpiderfy(true);
     clearDistanceLine();
     setTimeout(function () { map.resize(); }, 260);
   }
@@ -571,7 +615,12 @@
         buildMarkers(allData.places, allData.categories);
         map.on('movestart', cancelSpiderAnim);
         map.on('move', updateSpiderLines);
-        map.on('idle', runSpiderfy);
+        map.on('idle', function () {
+          var zoom = map.getZoom();
+          var zoomedIn = lastZoom !== null && zoom > lastZoom;
+          lastZoom = zoom;
+          runSpiderfy(false, !zoomedIn);
+        });
 
         var allBtn = filterBar.querySelector('[data-category="all"]');
         if (allBtn) {
