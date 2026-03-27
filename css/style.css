@@ -311,6 +311,19 @@ body {
   text-decoration: underline;
 }
 
+/* Amenity map dots */
+.amenity-dot {
+  transition: transform 0.15s;
+}
+.amenity-dot:hover {
+  transform: scale(1.5);
+}
+.amenity-dot.selected {
+  outline: 2px solid #1e5f63;
+  outline-offset: 2px;
+  transform: scale(1.2);
+}
+
 /* Distance line label */
 .distance-label {
   background: #1e5f63;

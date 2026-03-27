@@ -14,6 +14,7 @@
   var photosMap = {};
   var ckCenter = null;
   var distanceLabelMarker = null;
+  var selectedMarkerEl = null;
   var spiderAnim = null;   // requestAnimationFrame id for spread animation
 
   var STYLE_URL = 'https://api.maptiler.com/maps/019d2ac4-1b5c-7824-a78a-30cdcb276433/style.json?key=gctDBtFwdnIhG8N9CFpi';
@@ -96,15 +97,26 @@
   }
 
   function makeCircleEl(color) {
-    var el = document.createElement('div');
-    el.style.width        = '16px';
-    el.style.height       = '16px';
-    el.style.borderRadius = '50%';
-    el.style.background   = color;
-    el.style.border       = '2px solid #fff';
-    el.style.boxShadow    = '0 1px 4px rgba(0,0,0,0.3)';
-    el.style.cursor       = 'pointer';
-    return el;
+    var wrapper = document.createElement('div');
+    wrapper.style.width  = '16px';
+    wrapper.style.height = '16px';
+    wrapper.style.cursor = 'pointer';
+
+    var dot = document.createElement('div');
+    dot.className          = 'amenity-dot';
+    dot.style.width        = '16px';
+    dot.style.height       = '16px';
+    dot.style.borderRadius = '50%';
+    dot.style.background   = color;
+    dot.style.border       = '2px solid #fff';
+    dot.style.boxShadow    = '0 1px 4px rgba(0,0,0,0.3)';
+
+    wrapper.appendChild(dot);
+    return wrapper;
+  }
+
+  function getDot(markerEl) {
+    return markerEl.querySelector('.amenity-dot');
   }
 
   // --- Home marker -----------------------------------------
@@ -256,7 +268,7 @@
           map.easeTo({ center: newCenter, duration: 500 });
         }
 
-        openPanel(place, colorMap, labelMap);
+        openPanel(place, colorMap, labelMap, el);
       });
 
       var marker = new maplibregl.Marker({
@@ -428,7 +440,7 @@
         'line-color': '#1e5f63',
         'line-width': 2,
         'line-dasharray': [2, 1],
-        'line-opacity': 0.7,
+        'line-opacity': 1,
       },
     });
   }
@@ -467,8 +479,11 @@
   }
 
   // --- Side panel ------------------------------------------
-  function openPanel(place, colorMap, labelMap) {
+  function openPanel(place, colorMap, labelMap, markerEl) {
     currentPlace = place;
+    if (selectedMarkerEl) getDot(selectedMarkerEl).classList.remove('selected');
+    selectedMarkerEl = markerEl || null;
+    if (selectedMarkerEl) getDot(selectedMarkerEl).classList.add('selected');
     var color = colorMap[place.category] || '#607D8B';
     var label = labelMap[place.category] || place.category;
 
@@ -527,6 +542,7 @@
     sidePanel.classList.remove('open');
     sidePanel.setAttribute('aria-hidden', 'true');
     currentPlace = null;
+    if (selectedMarkerEl) { getDot(selectedMarkerEl).classList.remove('selected'); selectedMarkerEl = null; }
     clearDistanceLine();
     setTimeout(function () { map.resize(); }, 260);
   }
