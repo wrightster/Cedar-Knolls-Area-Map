@@ -7,49 +7,49 @@
   "radiusMiles": 15,
   "categories": [
     {
+      "id": "shopping",
+      "label": "Shopping",
+      "color": "#3fc8d2"
+    },
+    {
       "id": "grocery",
       "label": "Grocery",
-      "color": "#1e5f63"
-    },
-    {
-      "id": "park",
-      "label": "Parks",
-      "color": "#4a7c45"
-    },
-    {
-      "id": "gym",
-      "label": "Gyms",
-      "color": "#154b89"
-    },
-    {
-      "id": "church",
-      "label": "Churches",
-      "color": "#8293ca"
+      "color": "#3bd473"
     },
     {
       "id": "restaurant",
       "label": "Restaurants",
-      "color": "#b8722e"
-    },
-    {
-      "id": "school",
-      "label": "Schools",
-      "color": "#008eb5"
-    },
-    {
-      "id": "medical",
-      "label": "Medical",
-      "color": "#b54265"
+      "color": "#d26f32"
     },
     {
       "id": "coffee",
       "label": "Coffee",
-      "color": "#7a5642"
+      "color": "#4a2918"
     },
     {
-      "id": "shopping",
-      "label": "Shopping",
-      "color": "#5c7a8a"
+      "id": "gym",
+      "label": "Gyms",
+      "color": "#9340c2"
+    },
+    {
+      "id": "park",
+      "label": "Parks",
+      "color": "#8eb842"
+    },
+    {
+      "id": "school",
+      "label": "Schools",
+      "color": "#445ecf"
+    },
+    {
+      "id": "medical",
+      "label": "Medical",
+      "color": "#c03d34"
+    },
+    {
+      "id": "church",
+      "label": "Churches",
+      "color": "#cc4aae"
     }
   ],
   "places": [
