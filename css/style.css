@@ -311,12 +311,25 @@ body {
   text-decoration: underline;
 }
 
+/* Distance line label */
+.distance-label {
+  background: #1e5f63;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  pointer-events: none;
+}
+
 /* Google Maps CTA Button */
 .gmaps-btn {
   display: block;
   margin-top: 8px;
   padding: clamp(6px, 1.2vh, 11px) 16px;
-  background: #154b89;
+  background: #1e5f63;
   color: #fff;
   text-align: center;
   border-radius: 6px;
@@ -327,7 +340,7 @@ body {
 }
 
 .gmaps-btn:hover {
-  background: #0f3560;
+  background: #164547;
 }
 
 /* --- MapLibre overrides ----------------------------------- */

@@ -12,6 +12,8 @@
   var activeCategories = new Set(['all']);
   var currentPlace = null;
   var photosMap = {};
+  var ckCenter = null;
+  var distanceLabelMarker = null;
 
   var STYLE_URL = 'https://api.maptiler.com/maps/019d2ac4-1b5c-7824-a78a-30cdcb276433/style.json?key=gctDBtFwdnIhG8N9CFpi';
 
@@ -212,14 +214,13 @@
     });
 
     places.forEach(function (place) {
-      var color   = colorMap[place.category] || '#607D8B';
-      var iconUrl = PLACE_ICONS[place.name] || CATEGORY_ICONS[place.category];
-      var el      = iconUrl ? makePinEl(iconUrl) : makeCircleEl(color);
+      var color = colorMap[place.category] || '#607D8B';
+      var el    = makeCircleEl(color);
 
       var popup = new maplibregl.Popup({
         closeButton: false,
         closeOnClick: false,
-        offset: iconUrl ? 25 : 12,
+        offset: 12,
         className: 'place-tooltip',
       }).setText(place.name);
 
@@ -255,13 +256,65 @@
 
       var marker = new maplibregl.Marker({
         element: el,
-        anchor: iconUrl ? 'bottom' : 'center',
+        anchor: 'center',
       })
         .setLngLat([place.lng, place.lat])
         .addTo(map);
 
       markerGroups[place.category].push({ marker: marker, popup: popup });
     });
+  }
+
+  // --- Distance line ---------------------------------------
+  function addDistanceLineLayer() {
+    map.addSource('distance-line', {
+      type: 'geojson',
+      data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [] } },
+    });
+    map.addLayer({
+      id: 'distance-line',
+      type: 'line',
+      source: 'distance-line',
+      paint: {
+        'line-color': '#1e5f63',
+        'line-width': 2,
+        'line-dasharray': [2, 1],
+        'line-opacity': 0.7,
+      },
+    });
+  }
+
+  function drawDistanceLine(place) {
+    map.getSource('distance-line').setData({
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates: [
+          [ckCenter.lng, ckCenter.lat],
+          [place.lng, place.lat],
+        ],
+      },
+    });
+
+    if (distanceLabelMarker) { distanceLabelMarker.remove(); distanceLabelMarker = null; }
+
+    if (place.distanceMiles) {
+      var el = document.createElement('div');
+      el.className = 'distance-label';
+      el.textContent = place.distanceMiles + ' mi';
+
+      distanceLabelMarker = new maplibregl.Marker({ element: el, anchor: 'center' })
+        .setLngLat([(ckCenter.lng + place.lng) / 2, (ckCenter.lat + place.lat) / 2])
+        .addTo(map);
+    }
+  }
+
+  function clearDistanceLine() {
+    map.getSource('distance-line').setData({
+      type: 'Feature',
+      geometry: { type: 'LineString', coordinates: [] },
+    });
+    if (distanceLabelMarker) { distanceLabelMarker.remove(); distanceLabelMarker = null; }
   }
 
   // --- Side panel ------------------------------------------
@@ -318,12 +371,14 @@
     sidePanel.classList.add('open');
     sidePanel.setAttribute('aria-hidden', 'false');
     setTimeout(function () { map.resize(); }, 260);
+    drawDistanceLine(place);
   }
 
   function closePanel() {
     sidePanel.classList.remove('open');
     sidePanel.setAttribute('aria-hidden', 'true');
     currentPlace = null;
+    clearDistanceLine();
     setTimeout(function () { map.resize(); }, 260);
   }
 
@@ -343,6 +398,8 @@
       photosMap = results[1];
 
       initMap(allData.center).then(function () {
+        ckCenter = allData.center;
+        addDistanceLineLayer();
         addHomeMarker(allData.center);
         buildFilterButtons(allData.categories);
         buildMarkers(allData.places, allData.categories);
