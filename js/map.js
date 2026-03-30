@@ -686,6 +686,7 @@
       filterToggle.setAttribute('aria-expanded', 'false');
       filterBar.setAttribute('aria-hidden', 'true');
     }
+
   });
 
   // --- Panel toggle (collapse / expand) --------------------
@@ -694,6 +695,15 @@
       collapsePanel();
     } else {
       expandPanel();
+    }
+  });
+
+  document.addEventListener('mousedown', function (e) {
+    var attrib = document.querySelector('.maplibregl-ctrl-attrib');
+    if (attrib && !attrib.contains(e.target)) {
+      attrib.classList.remove('maplibregl-compact-show');
+      var btn = attrib.querySelector('.maplibregl-ctrl-attrib-button');
+      if (btn) btn.setAttribute('aria-pressed', 'false');
     }
   });
 
