@@ -25,7 +25,7 @@
   var filterToggle  = document.getElementById('filter-toggle');
   var filterOverlay = document.getElementById('filter-overlay');
   var sidePanel     = document.getElementById('side-panel');
-  var panelClose = document.getElementById('panel-close');
+  var panelToggle = document.getElementById('panel-toggle');
   var panelBadge = document.getElementById('panel-category-badge');
   var panelName  = document.getElementById('panel-name');
   var panelMeta  = document.getElementById('panel-meta');
@@ -230,7 +230,7 @@
     });
 
     places.forEach(function (place) {
-      var color = colorMap[place.category] || '#607D8B';
+      var color = colorMap[place.category] || '#738e99';
       var el    = makeCircleEl(color);
 
       var popup = new maplibregl.Popup({
@@ -246,7 +246,13 @@
         popup.setLngLat(map.unproject([pt.x + off.x, pt.y + off.y])).addTo(map);
       });
       el.addEventListener('mouseleave', function () {
-        popup.remove();
+        var container = popup.getElement();
+        if (container) {
+          container.classList.add('is-hiding');
+          setTimeout(function () { popup.remove(); }, 100);
+        } else {
+          popup.remove();
+        }
       });
       el.addEventListener('click', function () {
         var pixel     = map.project([place.lng, place.lat]);
@@ -528,7 +534,7 @@
     selectedMarkerEl = markerEl || null;
     if (selectedMarkerEl) getDot(selectedMarkerEl).classList.add('selected');
     runSpiderfy(true);
-    var color = colorMap[place.category] || '#607D8B';
+    var color = colorMap[place.category] || '#738e99';
     var label = labelMap[place.category] || place.category;
 
     var photoPath = photosMap[place.id];
@@ -578,13 +584,42 @@
 
     sidePanel.classList.add('open');
     sidePanel.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('panel-open', 'panel-has-place');
+    panelToggle.hidden = false;
+    updateTogglePortraitPos();
     setTimeout(function () { map.resize(); }, 260);
     drawDistanceLine(place);
+  }
+
+  function updateTogglePortraitPos() {
+    if (window.matchMedia('(orientation: portrait)').matches) {
+      panelToggle.style.bottom = (sidePanel.offsetHeight + 10 + 8) + 'px';
+    } else {
+      panelToggle.style.bottom = '';
+    }
+  }
+
+  function collapsePanel() {
+    panelToggle.style.bottom = '';
+    sidePanel.classList.remove('open');
+    sidePanel.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('panel-open');
+    setTimeout(function () { map.resize(); }, 260);
+  }
+
+  function expandPanel() {
+    updateTogglePortraitPos();
+    sidePanel.classList.add('open');
+    sidePanel.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('panel-open');
+    setTimeout(function () { map.resize(); }, 260);
   }
 
   function closePanel() {
     sidePanel.classList.remove('open');
     sidePanel.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('panel-open', 'panel-has-place');
+    panelToggle.hidden = true;
     currentPlace = null;
     if (selectedMarkerEl) { getDot(selectedMarkerEl).classList.remove('selected'); selectedMarkerEl = null; }
     runSpiderfy(true);
@@ -653,8 +688,14 @@
     }
   });
 
-  // --- Close panel -----------------------------------------
-  panelClose.addEventListener('click', closePanel);
+  // --- Panel toggle (collapse / expand) --------------------
+  panelToggle.addEventListener('click', function () {
+    if (sidePanel.classList.contains('open')) {
+      collapsePanel();
+    } else {
+      expandPanel();
+    }
+  });
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {

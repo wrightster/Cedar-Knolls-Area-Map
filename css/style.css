@@ -195,25 +195,43 @@ body {
   transform: translateX(0);
 }
 
-#panel-close {
-  position: absolute;
-  top: 10px;
-  right: 12px;
+/* --- Panel collapse tab ----------------------------------- */
+#panel-toggle {
+  position: fixed;
+  z-index: 11;
+  display: none;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
-  font-size: 1.5rem;
-  line-height: 1;
-  color: #888;
   cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
-  transition: color 0.15s, background 0.15s;
-  z-index: 1;
+  padding: 0;
+  /* Landscape: hovers just outside the panel's left edge */
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 28px;
+  transition: right 0.25s ease;
 }
 
-#panel-close:hover {
-  color: #231f20;
-  background: #f0ede4;
+body.panel-has-place #panel-toggle {
+  display: flex;
+}
+
+body.panel-open #panel-toggle {
+  right: calc(min(320px, 50vw) + 18px);
+}
+
+#panel-toggle svg {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.25s ease;
+  transform: rotate(180deg); /* collapsed landscape → ◁ */
+}
+
+body.panel-open #panel-toggle svg {
+  transform: rotate(0deg); /* open landscape → ▷ */
 }
 
 #panel-scroll {
@@ -268,7 +286,7 @@ body {
   line-height: 1.3;
   color: #231f20;
   margin-top: 2px;
-  padding-right: 28px; /* avoid overlap with close btn */
+  padding-right: 0;
 }
 
 #panel-meta {
@@ -399,8 +417,21 @@ body {
 }
 
 /* Place tooltip popup */
+@keyframes tooltip-in {
+  from { opacity: 0; transform: translateY(3px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+@keyframes tooltip-out {
+  from { opacity: 1; transform: translateY(0)   scale(1); }
+  to   { opacity: 0; transform: translateY(3px) scale(0.96); }
+}
+
+.place-tooltip {
+  max-width: none !important;
+}
+
 .place-tooltip .maplibregl-popup-content {
-  background: #231f20;
+  background: #1e5f63;
   color: #fff;
   padding: 4px 9px;
   border-radius: 4px;
@@ -408,11 +439,22 @@ body {
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
+  max-width: none;
   box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  animation: tooltip-in 0.12s ease-out both;
+}
+
+.place-tooltip.is-hiding .maplibregl-popup-content {
+  animation: tooltip-out 0.1s ease-in both;
 }
 
 .place-tooltip .maplibregl-popup-tip {
-  border-top-color: #231f20;
+  border-top-color: #1e5f63;
+}
+
+.place-tooltip.is-hiding .maplibregl-popup-tip {
+  opacity: 0;
+  transition: opacity 0.1s ease-in;
 }
 
 /* --- Focus ring ------------------------------------------- */
@@ -483,6 +525,30 @@ body {
 
 /* --- Portrait: side panel becomes bottom footer ----------- */
 @media (orientation: portrait) {
+  #panel-toggle {
+    right: auto;
+    top: auto;
+    transform: translateX(-50%);
+    left: 50%;
+    bottom: 18px;
+    width: 28px;
+    height: 16px;
+    transition: bottom 0.25s ease;
+  }
+
+  body.panel-open #panel-toggle {
+    right: auto;
+    /* bottom set dynamically by JS based on actual panel height */
+  }
+
+  #panel-toggle svg {
+    transform: rotate(-90deg); /* collapsed portrait → △ */
+  }
+
+  body.panel-open #panel-toggle svg {
+    transform: rotate(90deg); /* open portrait → ▽ */
+  }
+
   #side-panel {
     top: auto;
     left: 10px;

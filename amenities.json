@@ -9,47 +9,47 @@
     {
       "id": "shopping",
       "label": "Shopping",
-      "color": "#3fc8d2"
+      "color": "#43c4d1"
     },
     {
       "id": "grocery",
       "label": "Grocery",
-      "color": "#3bd473"
+      "color": "#4eb581"
     },
     {
       "id": "restaurant",
       "label": "Restaurants",
-      "color": "#d26f32"
+      "color": "#f49656"
     },
     {
       "id": "coffee",
       "label": "Coffee",
-      "color": "#4a2918"
+      "color": "#826054"
     },
     {
       "id": "gym",
       "label": "Gyms",
-      "color": "#9340c2"
+      "color": "#ae67ce"
     },
     {
       "id": "park",
       "label": "Parks",
-      "color": "#8eb842"
+      "color": "#9fbf3c"
     },
     {
       "id": "school",
       "label": "Schools",
-      "color": "#445ecf"
+      "color": "#638ae0"
     },
     {
       "id": "medical",
       "label": "Medical",
-      "color": "#c03d34"
+      "color": "#dd5757"
     },
     {
       "id": "church",
       "label": "Churches",
-      "color": "#cc4aae"
+      "color": "#ddcb4a"
     }
   ],
   "places": [

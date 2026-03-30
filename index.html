@@ -33,7 +33,6 @@
 
     <!-- Side Panel -->
     <aside id="side-panel" aria-label="Place details" aria-hidden="true">
-      <button id="panel-close" aria-label="Close panel">&times;</button>
       <div id="panel-scroll">
         <div id="panel-content">
           <div id="panel-photo-wrap" style="display:none">
@@ -55,6 +54,13 @@
         </div>
       </div>
     </aside>
+
+    <!-- Panel collapse/expand tab -->
+    <button id="panel-toggle" aria-label="Toggle panel" hidden>
+      <svg id="panel-toggle-icon" viewBox="0 0 12 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polygon points="0,0 12,10 0,20" fill="#f9f8f2"/>
+      </svg>
+    </button>
   </div>
 
   <script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
