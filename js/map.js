@@ -99,10 +99,13 @@
 
   function makeCircleEl(color) {
     var wrapper = document.createElement('div');
-    wrapper.style.width  = '16px';
-    wrapper.style.height = '16px';
-    wrapper.style.cursor = 'pointer';
-
+    wrapper.className           = 'dot-marker';
+    wrapper.style.width         = '24px';
+    wrapper.style.height        = '24px';
+    wrapper.style.display       = 'flex';
+    wrapper.style.alignItems    = 'center';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.cursor        = 'pointer';
     var dot = document.createElement('div');
     dot.className          = 'amenity-dot';
     dot.style.width        = '16px';
