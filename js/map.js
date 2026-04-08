@@ -14,6 +14,8 @@
   var photosMap = {};
   var ckCenter = null;
   var distanceLabelMarker = null;
+  var distanceHover = { line: false, label: false };
+  var labelMoveListener = null;
   var selectedMarkerEl = null;
   var spiderAnim = null;   // requestAnimationFrame id for spread animation
   var lastZoom = null;
@@ -508,6 +510,14 @@
         'line-opacity': 1,
       },
     });
+    map.on('mousemove', 'distance-line', function () { distanceHover.line = true;  applyDistanceFade(); });
+    map.on('mouseleave', 'distance-line', function () { distanceHover.line = false; applyDistanceFade(); });
+  }
+
+  function applyDistanceFade() {
+    var opacity = (distanceHover.line || distanceHover.label) ? 0.1 : 1;
+    map.setPaintProperty('distance-line', 'line-opacity', opacity);
+    if (distanceLabelMarker) distanceLabelMarker.getElement().style.opacity = opacity;
   }
 
   function drawDistanceLine(place) {
@@ -528,6 +538,16 @@
       var el = document.createElement('div');
       el.className = 'distance-label';
       el.textContent = place.distanceMiles + ' mi';
+      labelMoveListener = function (e) {
+        var rect = el.getBoundingClientRect();
+        var over = e.clientX >= rect.left && e.clientX <= rect.right &&
+                   e.clientY >= rect.top  && e.clientY <= rect.bottom;
+        if (over !== distanceHover.label) {
+          distanceHover.label = over;
+          applyDistanceFade();
+        }
+      };
+      map.getContainer().addEventListener('mousemove', labelMoveListener);
 
       distanceLabelMarker = new maplibregl.Marker({ element: el, anchor: 'center' })
         .setLngLat([(ckCenter.lng + place.lng) / 2, (ckCenter.lat + place.lat) / 2])
@@ -541,6 +561,9 @@
       geometry: { type: 'LineString', coordinates: [] },
     });
     if (distanceLabelMarker) { distanceLabelMarker.remove(); distanceLabelMarker = null; }
+    if (labelMoveListener) { map.getContainer().removeEventListener('mousemove', labelMoveListener); labelMoveListener = null; }
+    distanceHover.line = false;
+    distanceHover.label = false;
   }
 
   // --- Side panel ------------------------------------------

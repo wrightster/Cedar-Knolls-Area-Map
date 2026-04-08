@@ -397,6 +397,7 @@ body.panel-open #panel-toggle svg {
   white-space: nowrap;
   box-shadow: 0 1px 4px rgba(0,0,0,0.25);
   pointer-events: none;
+  transition: opacity 0.15s;
 }
 
 /* Google Maps CTA Button */
@@ -454,6 +455,7 @@ body.panel-open #panel-toggle svg {
 
 .place-tooltip {
   max-width: none !important;
+  z-index: 2;
 }
 
 .place-tooltip .maplibregl-popup-content {
