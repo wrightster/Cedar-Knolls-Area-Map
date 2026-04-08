@@ -143,7 +143,7 @@
     dot.style.borderRadius = '50%';
     dot.style.background   = color;
     dot.style.border       = '2px solid #fff';
-    dot.style.boxShadow    = '0 1px 4px rgba(0,0,0,0.3)';
+    dot.style.boxShadow    = 'none';
 
     wrapper.appendChild(dot);
     return wrapper;
@@ -324,19 +324,28 @@
 
   // --- Spiderfy --------------------------------------------
   function addSpiderLineLayer() {
-    map.addSource('spider-lines', {
-      type: 'geojson',
-      data: { type: 'FeatureCollection', features: [] },
-    });
-    map.addLayer({
-      id: 'spider-lines',
-      type: 'line',
-      source: 'spider-lines',
-      paint: {
-        'line-color': 'rgba(80,80,80,0.45)',
-        'line-width': 1.5,
-      },
-    });
+    var mapEl = document.getElementById('map');
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'spider-lines-svg';
+    svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;';
+    mapEl.appendChild(svg);
+  }
+
+  function drawSpiderPolygon(svg, x1, y1, x2, y2) {
+    var dx = x2 - x1, dy = y2 - y1;
+    var len = Math.sqrt(dx * dx + dy * dy);
+    if (len < 0.5) return;
+    var ux = dx / len, uy = dy / len;           // unit vector from real location toward dot
+    var px = -uy * 2, py = ux * 2;              // perpendicular, scaled to 2px (half of 4px base)
+    var bx = x2 - ux * 4, by = y2 - uy * 4;    // base point: 4px back from dot center
+    var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points',
+      x1 + ',' + y1 + ' ' +
+      (bx + px) + ',' + (by + py) + ' ' +
+      (bx - px) + ',' + (by - py)
+    );
+    poly.setAttribute('fill', 'white');
+    svg.appendChild(poly);
   }
 
   function cancelSpiderAnim() {
@@ -346,28 +355,18 @@
   // Redraws lines to match current dot positions without recomputing the layout.
   // Called on every move frame so lines stay attached to their dots during scroll/zoom.
   function updateSpiderLines() {
-    var features = [];
+    var svg = document.getElementById('spider-lines-svg');
+    if (!svg) return;
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
     Object.keys(markerGroups).forEach(function (catId) {
       markerGroups[catId].forEach(function (entry) {
         var off = entry._spiderOffset;
         if (!off || (Math.abs(off[0]) < 0.5 && Math.abs(off[1]) < 0.5)) return;
         if (!entry.marker.getElement().isConnected) return;
-        var lngLat = entry.marker.getLngLat();
-        var pt = map.project(lngLat);
-        var spreadLngLat = map.unproject([pt.x + off[0], pt.y + off[1]]);
-        features.push({
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: [
-              [lngLat.lng, lngLat.lat],
-              [spreadLngLat.lng, spreadLngLat.lat],
-            ],
-          },
-        });
+        var pt = map.project(entry.marker.getLngLat());
+        drawSpiderPolygon(svg, pt.x, pt.y, pt.x + off[0], pt.y + off[1]);
       });
     });
-    map.getSource('spider-lines').setData({ type: 'FeatureCollection', features: features });
   }
 
   function runSpiderfy(anchorSelected, warmStart) {
@@ -477,7 +476,6 @@
       var t = Math.min((now - startTime) / DURATION, 1);
       var ease = 1 - Math.pow(1 - t, 3);  // cubic ease-out
 
-      var features = [];
       items.forEach(function (item) {
         var ox = item.startOx + (item.targetOx - item.startOx) * ease;
         var oy = item.startOy + (item.targetOy - item.startOy) * ease;
@@ -485,23 +483,8 @@
 
         item.marker.setOffset([ox, oy]);
         item.entry._spiderOffset = [ox, oy];
-
-        if (ox === 0 && oy === 0) return;
-        var pt = map.project(item.lngLat);
-        var spreadLngLat = map.unproject([pt.x + ox, pt.y + oy]);
-        features.push({
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: [
-              [item.lngLat.lng, item.lngLat.lat],
-              [spreadLngLat.lng, spreadLngLat.lat],
-            ],
-          },
-        });
       });
-
-      map.getSource('spider-lines').setData({ type: 'FeatureCollection', features: features });
+      updateSpiderLines();
       spiderAnim = (t < 1) ? requestAnimationFrame(frame) : null;
     }
 

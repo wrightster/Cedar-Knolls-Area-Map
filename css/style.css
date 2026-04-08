@@ -145,6 +145,14 @@ body {
 }
 
 /* --- Map -------------------------------------------------- */
+#spider-lines-svg {
+  z-index: 0;
+}
+
+.maplibregl-marker {
+  z-index: 1;
+}
+
 #map {
   flex: 1;
   min-width: 0;
