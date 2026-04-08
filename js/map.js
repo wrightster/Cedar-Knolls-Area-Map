@@ -70,6 +70,35 @@
     'shopping':   'assets/Shopping.svg',
   };
 
+  var MAX_PAN_MILES = 20;
+  var zoomDisplay = document.getElementById('zoom-display');
+
+  function haversineMiles(lat1, lon1, lat2, lon2) {
+    var R = 3958.8;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function updateZoomDisplay() {
+    if (zoomDisplay) zoomDisplay.textContent = 'Zoom ' + map.getZoom().toFixed(1);
+  }
+
+  function clampPan() {
+    var center = map.getCenter();
+    var dist = haversineMiles(ckCenter.lat, ckCenter.lng, center.lat, center.lng);
+    if (dist > MAX_PAN_MILES) {
+      // Project back onto the 20-mile circle
+      var ratio = MAX_PAN_MILES / dist;
+      var newLat = ckCenter.lat + (center.lat - ckCenter.lat) * ratio;
+      var newLng = ckCenter.lng + (center.lng - ckCenter.lng) * ratio;
+      map.easeTo({ center: [newLng, newLat], duration: 300 });
+    }
+  }
+
   // --- Init map --------------------------------------------
   function initMap(center) {
     map = new maplibregl.Map({
@@ -77,6 +106,7 @@
       style: STYLE_URL,
       center: [center.lng, center.lat],
       zoom: 11,
+      minZoom: 9,
     });
 
     return new Promise(function (resolve) {
@@ -651,7 +681,13 @@
         addDistanceLineLayer();
         addHomeMarker(allData.center);
         buildFilterButtons(allData.categories);
+        filterBar.classList.add('open');
+        filterToggle.setAttribute('aria-expanded', 'true');
+        filterBar.setAttribute('aria-hidden', 'false');
         buildMarkers(allData.places, allData.categories);
+        updateZoomDisplay();
+        map.on('zoom', updateZoomDisplay);
+        map.on('moveend', clampPan);
         map.on('movestart', cancelSpiderAnim);
         map.on('move', updateSpiderLines);
         map.on('idle', function () {
@@ -683,14 +719,6 @@
     filterBar.setAttribute('aria-hidden', String(!open));
   });
 
-  document.addEventListener('click', function (e) {
-    if (!filterOverlay.contains(e.target)) {
-      filterBar.classList.remove('open');
-      filterToggle.setAttribute('aria-expanded', 'false');
-      filterBar.setAttribute('aria-hidden', 'true');
-    }
-
-  });
 
   // --- Panel toggle (collapse / expand) --------------------
   panelToggle.addEventListener('click', function () {
